@@ -10,7 +10,16 @@ FEED = "https://udayprakash.com/rss.xml"
 COUNT = 3
 MAX_AGE = timedelta(days=365)  # only show posts from the last year
 
-with urllib.request.urlopen(FEED, timeout=30) as response:
+# Identify this feed client rather than sending urllib's generic User-Agent,
+# which the site's edge currently rejects. Do not impersonate a browser.
+request = urllib.request.Request(
+    FEED,
+    headers={
+        "User-Agent": "UdayGPrakash-ProfileFeed/1.0 (+https://github.com/UdayGPrakash/UdayGPrakash)",
+        "Accept": "application/rss+xml, application/xml;q=0.9",
+    },
+)
+with urllib.request.urlopen(request, timeout=30) as response:
     root = ET.fromstring(response.read())
 
 lines = []
